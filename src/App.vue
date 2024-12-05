@@ -75,13 +75,13 @@ export default {
 
 /* Стилі для контейнера контенту */
 .v-container {
-  padding-top: 24px;
-  padding-bottom: 24px;
+  padding-top: 16px;
+  padding-bottom: 16px;
 }
 
 /* Стилі для нижнього колонтитулу */
 .v-footer {
-  padding-top: 16px;
-  padding-bottom: 16px;
+  padding-top: 8px;
+  padding-bottom: 8px;
 }
 </style>
