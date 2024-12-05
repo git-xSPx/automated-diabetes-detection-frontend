@@ -136,7 +136,8 @@
 </template>
 
 <script>
-import axios from 'axios';
+//import axios from 'axios';
+import axios from '../plugins/axios';
 
 export default {
   name: 'UserForm',
@@ -201,9 +202,8 @@ export default {
                 'Content-type': 'application/json',
               }
           })
-//          .post('http://127.0.0.1:5000/predict', this.formData)
           .then((response) => {
-            const probability = response.data.diabetes_probability * 100;
+            const probability = (response.data.diabetes_probability * 100).toFixed(1);
             if (response.data.diabetes_prediction === 1) {
               this.$router.push({
                 name: 'Result',
