@@ -1,14 +1,13 @@
 <template>
   <v-container>
-    <v-form ref="form" @submit.prevent="handleSubmit">
+    <!-- v-model on v-form binds the form's validation state to isValid -->
+    <v-form v-model="isValid" @submit.prevent="handleSubmit">
       <v-card>
         <v-card-title class="text-h5">
           Введіть свої дані
         </v-card-title>
         <v-card-text>
-          <!-- Wrap form fields in v-row -->
           <v-row>
-            
             <!-- Gender Field -->
             <v-col cols="12" md="4">
               <v-radio-group
@@ -51,12 +50,12 @@
             <!-- Age Field -->
             <v-col cols="12" md="6">
               <v-text-field
-              v-model="formData.age"
-              :rules="[rules.required, rules.age]"
-              label="Вік"
-              type="number"
-              min="1"
-              max="120"
+                v-model="formData.age"
+                :rules="[rules.required, rules.age]"
+                label="Вік"
+                type="number"
+                min="1"
+                max="120"
               ></v-text-field>
             </v-col>
 
@@ -136,13 +135,13 @@
 </template>
 
 <script>
-//import axios from 'axios';
 import axios from '../plugins/axios';
 
 export default {
   name: 'UserForm',
   data() {
     return {
+      isValid: false, // Tracks the overall validity of the form in Vuetify 3
       formData: {
         gender: '',
         age: null,
@@ -151,7 +150,7 @@ export default {
         smoking_history: '',
         bmi: null,
         HbA1c_level: null,
-        blood_glucose_level: null, // This will be set after conversion
+        blood_glucose_level: null,
       },
       bloodGlucoseUnit: 'mg/dL',
       bloodGlucoseUnits: ['mg/dL', 'mmol/L'],
@@ -181,52 +180,55 @@ export default {
   },
   methods: {
     handleSubmit() {
-      // Конвертація рівня глюкози в mg/dL
+      // The submit event triggers validation.
+      // If the form is invalid, isValid will be false and we should not proceed.
+      if (!this.isValid) {
+        // Do nothing if form is invalid
+        return;
+      }
+
+      // Convert the blood glucose level to mg/dL
       let bloodGlucoseMg =
         this.bloodGlucoseUnit === 'mmol/L'
           ? this.bloodGlucoseValue * 18
           : this.bloodGlucoseValue;
 
-      // Оновлення даних форми
+      // Update form data
       this.formData.blood_glucose_level = bloodGlucoseMg;
 
-      // Перевірка форми
-      if (this.$refs.form.validate()) {
-        // Відправка даних на сервер
-        axios({
-              method: 'POST',
-              url: '/predict',
-              data: this.formData,
-              headers: {
-                'Access-Control-Allow-Origin': '*',
-                'Content-type': 'application/json',
-              }
-          })
-          .then((response) => {
-            const probability = (response.data.diabetes_probability * 100).toFixed(1);
-            if (response.data.diabetes_prediction === 1) {
-              this.$router.push({
-                name: 'Result',
-                query: {
-                  message: `Користувач, ймовірно, має діабет. Імовірність: ${probability}%.`,
-                },
-              });
-            } else {
-              this.$router.push({
-                name: 'Result',
-                query: {
-                  message: `У користувача, ймовірно, немає діабету. Імовірність: ${probability}%.`,
-                },
-              });
-            }
-          })
-          .catch((error) => {
-            // Обробка помилок
-            this.errorMessage =
-              error.response?.data?.message || 'Сталася помилка';
-            this.showError = true;
-          });
-      }
+      // Send data to the server if valid
+      axios({
+        method: 'POST',
+        url: '/predict',
+        data: this.formData,
+        headers: {
+          'Content-type': 'application/json',
+        }
+      })
+        .then((response) => {
+          const probability = (response.data.diabetes_probability * 100).toFixed(1);
+          if (response.data.diabetes_prediction === 1) {
+            this.$router.push({
+              name: 'Result',
+              query: {
+                message: `Користувач, ймовірно, має діабет. Імовірність: ${probability}%.`,
+              },
+            });
+          } else {
+            this.$router.push({
+              name: 'Result',
+              query: {
+                message: `У користувача, ймовірно, немає діабету. Імовірність: ${probability}%.`,
+              },
+            });
+          }
+        })
+        .catch((error) => {
+          // Handle errors
+          this.errorMessage =
+            error.response?.data?.message || 'Сталася помилка';
+          this.showError = true;
+        });
     },
   },
 };
