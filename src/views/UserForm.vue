@@ -199,7 +199,7 @@ export default {
       // Send data to the server if valid
       axios({
         method: 'POST',
-        url: '/predict',
+        url: '/api/predict',
         data: this.formData,
         headers: {
           'Content-type': 'application/json',
