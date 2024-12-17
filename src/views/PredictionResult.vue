@@ -21,6 +21,9 @@
                 <v-card-text>
                   {{ message }}
                 </v-card-text>
+                <v-card-text>
+                  {{ predictionModel }}
+                </v-card-text>
               </v-col>
             </v-row>
 
@@ -46,6 +49,16 @@ export default {
   computed: {
     message() {
       return this.$route.query.message || 'Немає результату';
+    },
+    predictionModel() {
+      if(this.$route.query.model && (this.$route.query.model).toLowerCase() === 'lr') {
+        return 'Логістична регресія (LR)'
+      }
+      else if(this.$route.query.model && (this.$route.query.model).toLowerCase() === 'xgboost'){
+        return 'Градієнтний бустинг (XGBoost)'
+      }
+
+      return 'Немає моделі';
     },
   },
   methods: {
