@@ -69,12 +69,22 @@
               ></v-select>
             </v-col>
 
-            <!-- BMI Field -->
+            <!-- body height -->
             <v-col cols="12" md="6">
               <v-text-field
-                v-model="formData.bmi"
-                :rules="[rules.required, rules.bmi]"
-                label="ІМТ (Індекс маси тіла)"
+                v-model="bodyHeight"
+                :rules="[rules.required, rules.bodyHeight]"
+                label="Зріст (см)"
+                type="number"
+              ></v-text-field>
+            </v-col>
+
+            <!-- body weight -->
+            <v-col cols="12" md="6">
+              <v-text-field
+                v-model="bodyWeight"
+                :rules="[rules.required, rules.bodyWeight]"
+                label="Вага (кг)"
                 type="number"
               ></v-text-field>
             </v-col>
@@ -152,6 +162,8 @@ export default {
         HbA1c_level: null,
         blood_glucose_level: null,
       },
+      bodyHeight: null,
+      bodyWeight: null,
       bloodGlucoseUnit: 'mg/dL',
       bloodGlucoseUnits: ['mg/dL', 'mmol/L'],
       bloodGlucoseValue: null,
@@ -164,6 +176,10 @@ export default {
           (value >= 1 && value <= 120) || 'Вік має бути між 1 та 120',
         bmi: (value) =>
           (value >= 10 && value <= 80) || 'ІМТ має бути між 10 та 80',
+        bodyHeight: (value) =>
+        (value >= 80 && value <= 250) || 'Зріст має бути між 80см та 250см',
+        bodyWeight: (value) =>
+        (value >= 30 && value <= 300) || 'Вага має бути між 30кг та 300кг',
         hba1c: (value) =>
           (value >= 2 && value <= 20) || 'Рівень HbA1c має бути між 2% та 20%',
         bloodGlucose: (value) => {
@@ -186,6 +202,9 @@ export default {
         // Do nothing if form is invalid
         return;
       }
+      
+      // Calculate BMI
+      this.formData.bmi = this.bodyWeight / Math.pow(this.bodyHeight/100, 2);
 
       // Convert the blood glucose level to mg/dL
       let bloodGlucoseMg =
