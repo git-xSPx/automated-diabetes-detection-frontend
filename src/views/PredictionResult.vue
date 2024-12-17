@@ -52,10 +52,10 @@ export default {
     },
     predictionModel() {
       if(this.$route.query.model && (this.$route.query.model).toLowerCase() === 'lr') {
-        return 'Логістична регресія (LR)'
+        return 'Модель передбачення: Логістична регресія (LR)'
       }
       else if(this.$route.query.model && (this.$route.query.model).toLowerCase() === 'xgboost'){
-        return 'Градієнтний бустинг (XGBoost)'
+        return 'Модель передбачення: Градієнтний бустинг (XGBoost)'
       }
 
       return 'Немає моделі';
