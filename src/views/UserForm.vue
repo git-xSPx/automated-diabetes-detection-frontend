@@ -212,6 +212,7 @@ export default {
               name: 'Result',
               query: {
                 message: `Користувач, ймовірно, має діабет. Імовірність: ${probability}%.`,
+                model: response.data.diabetes_prediction_model,
               },
             });
           } else {
@@ -219,6 +220,7 @@ export default {
               name: 'Result',
               query: {
                 message: `У користувача, ймовірно, немає діабету. Імовірність: ${probability}%.`,
+                model: response.data.diabetes_prediction_model,
               },
             });
           }
