@@ -164,7 +164,7 @@ export default {
       },
       bodyHeight: null,
       bodyWeight: null,
-      bloodGlucoseUnit: 'mg/dL',
+      bloodGlucoseUnit: 'mmol/L',
       bloodGlucoseUnits: ['mg/dL', 'mmol/L'],
       bloodGlucoseValue: null,
       // Mapping between English and localized options
