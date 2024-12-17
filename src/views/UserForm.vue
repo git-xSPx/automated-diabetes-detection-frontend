@@ -63,7 +63,7 @@
             <v-col cols="12" md="6">
               <v-select
                 v-model="formData.smoking_history"
-                :items="smokingOptions"
+                :items="localizedSmokingOptions"
                 :rules="[rules.required]"
                 label="Історія паління"
               ></v-select>
@@ -167,7 +167,13 @@ export default {
       bloodGlucoseUnit: 'mg/dL',
       bloodGlucoseUnits: ['mg/dL', 'mmol/L'],
       bloodGlucoseValue: null,
-      smokingOptions: ['No Info', 'Never', 'Former', 'Current'],
+      // Mapping between English and localized options
+      smokingHistoryMapping: {
+        'No Info': 'Немає інформації',
+        'Never': 'Ніколи',
+        'Former': 'Раніше',
+        'Current': 'Зараз',
+      },
       errorMessage: '',
       showError: false,
       rules: {
@@ -194,6 +200,12 @@ export default {
       },
     };
   },
+  computed: {
+    localizedSmokingOptions() {
+      // Return only the localized options for the select dropdown
+      return Object.values(this.smokingHistoryMapping);
+    },
+  },
   methods: {
     handleSubmit() {
       // The submit event triggers validation.
@@ -203,6 +215,11 @@ export default {
         return;
       }
       
+      // Convert the localized value back to English for the API
+      this.formData.smoking_history = Object.keys(this.smokingHistoryMapping).find(
+        (key) => this.smokingHistoryMapping[key] === this.formData.smoking_history
+      );
+
       // Calculate BMI
       this.formData.bmi = this.bodyWeight / Math.pow(this.bodyHeight/100, 2);
 
